@@ -16,7 +16,7 @@ function NameForm() {
 
   return (
     <div style={{ fontFamily: "Arial", padding: "20px" }}>
-      <h2>Enter Your Name</h2>
+      
 
       {/* This is the static heading Cypress expects on initial load */}
       <h3>Full Name Display</h3>
