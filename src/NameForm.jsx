@@ -7,7 +7,7 @@ function NameForm() {
   const [fullName, setFullName] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // prevent page reload
+    e.preventDefault();
     if (firstName && lastName) {
       setFullName(`${firstName} ${lastName}`);
     } else {
@@ -45,8 +45,11 @@ function NameForm() {
         <button type="submit">Submit</button>
       </form>
 
+      {/* Add this heading so Cypress finds it */}
+      <h3>Full Name Display</h3>
+
       {fullName && (
-        <h3 style={{ marginTop: "20px" }}>
+        <h3 style={{ marginTop: "10px" }}>
           Full Name: {fullName}
         </h3>
       )}
