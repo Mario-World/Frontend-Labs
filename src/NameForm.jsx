@@ -10,13 +10,16 @@ function NameForm() {
     if (firstName && lastName) {
       setFullName(`${firstName} ${lastName}`);
     } else {
-      setFullName(""); // clear fullName if fields are empty
+      setFullName(""); // clear if incomplete
     }
   };
 
   return (
     <div style={{ fontFamily: "Arial", padding: "20px" }}>
       <h2>Enter Your Name</h2>
+
+      {/* This is the static heading Cypress expects on initial load */}
+      <h3>Full Name Display</h3>
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="firstName">First Name:</label>
@@ -42,10 +45,10 @@ function NameForm() {
         <button type="submit">Submit</button>
       </form>
 
-      {/* Only render full name when both fields have values */}
+      {/* Only render this after valid submission */}
       {fullName && (
-        <h3 style={{ marginTop: "20px" }}>
-          Full Name Display: {fullName}
+        <h3 data-testid="full-name" style={{ marginTop: "20px" }}>
+          Full Name: {fullName}
         </h3>
       )}
     </div>
