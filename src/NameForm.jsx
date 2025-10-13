@@ -45,7 +45,7 @@ function NameForm() {
       {/* Only render full name when both fields have values */}
       {fullName && (
         <h3 style={{ marginTop: "20px" }}>
-          Full Name: {fullName}
+          Full Name Display: {fullName}
         </h3>
       )}
     </div>
