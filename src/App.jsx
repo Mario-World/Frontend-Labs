@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import NameForm from './NameForm';
 
 export default function App() {
