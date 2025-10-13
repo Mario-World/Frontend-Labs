@@ -1,4 +1,3 @@
-// src/NameForm.jsx
 import React, { useState } from "react";
 
 function NameForm() {
@@ -11,7 +10,7 @@ function NameForm() {
     if (firstName && lastName) {
       setFullName(`${firstName} ${lastName}`);
     } else {
-      setFullName("Please enter both first and last name.");
+      setFullName(""); // clear fullName if fields are empty
     }
   };
 
@@ -26,7 +25,6 @@ function NameForm() {
           type="text"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          required
         />
 
         <br /><br />
@@ -37,7 +35,6 @@ function NameForm() {
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          required
         />
 
         <br /><br />
@@ -45,11 +42,9 @@ function NameForm() {
         <button type="submit">Submit</button>
       </form>
 
-      {/* Add this heading so Cypress finds it */}
-      <h3>Full Name Display</h3>
-
+      {/* Only render full name when both fields have values */}
       {fullName && (
-        <h3 style={{ marginTop: "10px" }}>
+        <h3 style={{ marginTop: "20px" }}>
           Full Name: {fullName}
         </h3>
       )}
