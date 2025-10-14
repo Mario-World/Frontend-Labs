@@ -6,10 +6,10 @@ function App() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState("");
 
-  // Check if a string ends with an operator
+  // Check if string ends with an operator
   const isEndsWithOperator = (s) => /[+\-*/]$/.test(s);
 
-  // Append value to input, prevent multiple consecutive operators
+  // Append value to input safely
   const handleClick = (value) => {
     if (/[+\-*/]/.test(value)) {
       // Don't allow operator as first character
@@ -17,6 +17,13 @@ function App() {
 
       // Don't allow consecutive operators
       if (isEndsWithOperator(input)) return;
+    }
+
+    if (value === ".") {
+      // Prevent multiple decimals in a number
+      const parts = input.split(/[+\-*/]/);
+      const lastNumber = parts[parts.length - 1];
+      if (lastNumber.includes(".")) return;
     }
 
     setInput((prev) => prev + value);
@@ -28,16 +35,16 @@ function App() {
     setResult("");
   };
 
-  // Calculate the expression
+  // Evaluate expression
   const handleCalculate = () => {
     const trimmed = input.trim();
 
-    // Invalid cases: empty, ends with operator, starts with operator, consecutive operators
+    // Invalid cases
     if (
       trimmed === "" ||
       isEndsWithOperator(trimmed) ||
-      /^[+\-*/]/.test(trimmed) ||
-      /[+\-*/]{2,}/.test(trimmed)
+      /^[+\-*/]/.test(trimmed) || // starts with operator
+      /[+\-*/]{2,}/.test(trimmed) // consecutive operators
     ) {
       setResult("Error");
       return;
@@ -46,9 +53,11 @@ function App() {
     try {
       const output = Function(`return ${trimmed}`)();
 
-      // Handle division by zero or NaN
-      if (output === Infinity || output === -Infinity || isNaN(output)) {
-        setResult("Error");
+      // Handle division by zero
+      if (isNaN(output)) {
+        setResult("NaN"); // 0/0
+      } else if (output === Infinity || output === -Infinity) {
+        setResult(output); // x/0
       } else {
         setResult(output);
       }
