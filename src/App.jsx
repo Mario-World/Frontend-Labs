@@ -34,7 +34,7 @@ function App() {
       setFilteredCountries(countries);
     } else {
       const filtered = countries.filter((country) =>
-        country.name.toLowerCase().includes(value.toLowerCase())
+        country.common.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredCountries(filtered);
     }
@@ -52,9 +52,9 @@ function App() {
 
       <div className="countriesGrid">
         {filteredCountries.map((country) => (
-          <div key={country.name} className="countryCard">
-            <img src={country.flag} alt={`${country.name} flag`} />
-            <p>{country.name}</p>
+          <div key={country.common} className="countryCard">
+            <img src={country.png} alt={`${country.common} flag`} />
+            <p>{country.common}</p>
           </div>
         ))}
       </div>
