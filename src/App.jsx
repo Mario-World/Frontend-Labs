@@ -1,3 +1,4 @@
+// App.jsx
 import { useState } from "react";
 import "./App.css";
 
@@ -5,19 +6,52 @@ function App() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState("");
 
+  // Check if a string ends with an operator
+  const isEndsWithOperator = (s) => /[+\-*/]$/.test(s);
+
+  // Append value to input, prevent multiple consecutive operators
   const handleClick = (value) => {
-    setInput(input + value);
+    if (/[+\-*/]/.test(value)) {
+      // Don't allow operator as first character
+      if (input === "") return;
+
+      // Don't allow consecutive operators
+      if (isEndsWithOperator(input)) return;
+    }
+
+    setInput((prev) => prev + value);
   };
 
+  // Clear input and result
   const handleClear = () => {
     setInput("");
     setResult("");
   };
 
+  // Calculate the expression
   const handleCalculate = () => {
+    const trimmed = input.trim();
+
+    // Invalid cases: empty, ends with operator, starts with operator, consecutive operators
+    if (
+      trimmed === "" ||
+      isEndsWithOperator(trimmed) ||
+      /^[+\-*/]/.test(trimmed) ||
+      /[+\-*/]{2,}/.test(trimmed)
+    ) {
+      setResult("Error");
+      return;
+    }
+
     try {
-      const output = Function(`return ${input}`)();
-      setResult(output);
+      const output = Function(`return ${trimmed}`)();
+
+      // Handle division by zero or NaN
+      if (output === Infinity || output === -Infinity || isNaN(output)) {
+        setResult("Error");
+      } else {
+        setResult(output);
+      }
     } catch {
       setResult("Error");
     }
@@ -27,13 +61,13 @@ function App() {
     <div className="calculator">
       <h1>React Calculator</h1>
 
-      
+      {/* Input field */}
       <input type="text" value={input} readOnly />
 
-      
-      <div>{result}</div>
+      {/* Result display */}
+      <div className="result">{result}</div>
 
-      
+      {/* Buttons */}
       <div className="buttons">
         <button onClick={() => handleClick("7")}>7</button>
         <button onClick={() => handleClick("8")}>8</button>
