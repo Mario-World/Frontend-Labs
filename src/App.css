@@ -1,47 +1,42 @@
-.calculator {
-  text-align: center;
-  margin-top: 50px;
-  font-family: "Times New Roman", serif;
+/* App.css */
+.app {
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-h1 {
-  font-size: 36px;
-  font-weight: bold;
+input[type="text"] {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
   margin-bottom: 20px;
+  font-size: 16px;
 }
 
-input {
-  width: 200px;
-  height: 30px;
-  font-size: 18px;
-  text-align: right;
-  margin-bottom: 10px;
+.countriesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 60px);
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+.countryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
 }
 
-button {
-  height: 50px;
-  font-size: 20px;
-  border-radius: 10px;
-  border: 1px solid black;
-  background-color: #f2f2f2;
-  cursor: pointer;
+.countryCard img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
-button:hover {
-  background-color: #e0e0e0;
-}
-
-div:last-child {
+.countryCard p {
   margin-top: 10px;
-  font-size: 20px;
   font-weight: bold;
-  min-height: 24px;
 }
