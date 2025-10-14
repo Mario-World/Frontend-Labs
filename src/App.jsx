@@ -1,65 +1,33 @@
-// App.jsx
-import { useState, useEffect } from "react";
-import "./App.css";
+import React, { Component } from "react";
 
-function App() {
-  const [countries, setCountries] = useState([]);
-  const [search, setSearch] = useState("");
-  const [filteredCountries, setFilteredCountries] = useState([]);
-
-  // Fetch all countries on initial render
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch(
-         "https://countries-search-data-prod-812920491762.asia-south1.run.app/countries"
-        );
-        const data = await response.json();
-        setCountries(data);
-        setFilteredCountries(data);
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-      }
+class Counter extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0,
     };
+  }
 
-    fetchCountries();
-  }, []);
-
-  // Handle search input
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearch(value);
-
-    if (value.trim() === "") {
-      setFilteredCountries(countries);
-    } else {
-      const filtered = countries.filter((country) =>
-        country.common.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredCountries(filtered);
-    }
+  handleIncrement = () => {
+    this.setState({ count: this.state.count + 1 });
   };
 
-  return (
-    <div className="app">
-      <h1>Country Flags</h1>
-      <input
-        type="text"
-        placeholder="Search countries..."
-        value={search}
-        onChange={handleSearch}
-      />
+  handleDecrement = () => {
+    this.setState({ count: this.state.count - 1 });
+  };
 
-      <div className="countriesGrid">
-        {filteredCountries.map((country) => (
-          <div key={country.common} className="countryCard">
-            <img src={country.png} alt={`${country.common} flag`} />
-            <p>{country.common}</p>
-          </div>
-        ))}
+  render() {
+    return (
+      <div>
+        <h2>Counter App</h2>
+        <p>Count: {this.state.count}</p>
+
+        {/* ✅ Buttons must be named exactly "Increment" and "Decrement" */}
+        <button onClick={this.handleIncrement}>Increment</button>
+        <button onClick={this.handleDecrement}>Decrement</button>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
-export default App;
+export default Counter;
