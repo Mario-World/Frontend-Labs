@@ -65,14 +65,14 @@ function PaginationApp() {
 
       {/* Pagination Controls */}
       <div style={{ marginTop: "20px", textAlign: "center"}}>
-        <button onClick={handlePrevious} disabled={currentPage === 1} 
+        <button onClick={handlePrevious}
         style = {{backgroundColor: "green", padding: "10px", color: "white"}}>
           Previous
         </button>
         <span style={{ margin: "0 15px" , padding: "10px", backgroundColor: "green", color: "white" }}>
            {currentPage} 
         </span>
-        <button onClick={handleNext} disabled={currentPage === totalPages}
+        <button onClick={handleNext}
         style ={{backgroundColor: "green", padding: "10px", color: "white"}}>
           Next
         </button>
