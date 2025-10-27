@@ -1,84 +1,146 @@
 import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
+import WalletBalance from "./components/walletBalance";
+import AddIncomeModal from "./components/AddIncomeModal";
+import AddExpenseModal from "./components/AddExpenseModal";
+import ExpenseList from "./components/ExpenseList";
+import ExpenseSummary from "./components/ExpenseSummary";
+import ExpenseTrends from "./components/ExpenseTrends";
+import { loadFromLocal, saveToLocal } from "./utils/localStorageUtils";
 
-function PaginationApp() {
-  const [employees, setEmployees] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+Modal.setAppElement("#root");
 
-  // Fetch data with error handling
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await fetch(
-          "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
-        );
-        if (!response.ok) throw new Error("Network response was not ok");
-        const data = await response.json();
-        setEmployees(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        alert("failed to fetch data");
-      }
-    };
+export default function App() {
+  // default wallet balance 5000
+  const [walletBalance, setWalletBalance] = useState(() => {
+    const saved = loadFromLocal("walletBalance");
+    return typeof saved === "number" ? saved : 5000;
+  });
 
-    fetchEmployees();
-  }, []);
+  // expenses persisted under key 'expenses'
+  const [expenses, setExpenses] = useState(() => loadFromLocal("expenses") || []);
 
-  // Pagination logic
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = employees.slice(indexOfFirstRow, indexOfLastRow);
-  const totalPages = Math.ceil(employees.length / rowsPerPage);
+  const [showAddIncome, setShowAddIncome] = useState(false);
+  const [showAddExpense, setShowAddExpense] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
 
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
+  // Persist walletBalance and expenses
+  useEffect(() => saveToLocal("walletBalance", walletBalance), [walletBalance]);
+  useEffect(() => saveToLocal("expenses", expenses), [expenses]);
 
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  // Add income
+  function handleAddIncome(amount) {
+    setWalletBalance((b) => Number(b) + Number(amount));
+  }
+
+  // Add expense (from form)
+  function handleAddExpense(exp) {
+    // exp has { title, price, category, date, id }
+    if (exp.price > walletBalance) {
+      alert("Insufficient balance");
+      return;
+    }
+    setExpenses((list) => [exp, ...list]);
+    setWalletBalance((b) => Number(b) - Number(exp.price));
+  }
+
+  // Start editing: populate modal with expense
+  function startEditExpense(exp) {
+    setEditingExpense(exp);
+    setShowAddExpense(true);
+  }
+
+  // Save edited expense: must update wallet correctly and prevent overspend
+  function handleSaveEditedExpense(updated) {
+    const orig = expenses.find((e) => e.id === updated.id);
+    if (!orig) return;
+
+    // available funds = current wallet + orig.price (we refund original then subtract new)
+    const available = Number(walletBalance) + Number(orig.price);
+    if (updated.price > available) {
+      alert("Insufficient balance to increase this expense");
+      return;
+    }
+
+    const updatedList = expenses.map((e) => (e.id === updated.id ? updated : e));
+    setExpenses(updatedList);
+
+    // Adjust wallet: refund orig.price then subtract updated.price => net change = orig - updated
+    setWalletBalance((b) => Number(b) + Number(orig.price) - Number(updated.price));
+    setEditingExpense(null);
+    setShowAddExpense(false);
+  }
+
+  // Delete expense: refund amount to wallet
+  function handleDeleteExpense(id) {
+    const found = expenses.find((e) => e.id === id);
+    if (!found) return;
+    if (!window.confirm("Delete this expense?")) return;
+    setExpenses((list) => list.filter((e) => e.id !== id));
+    setWalletBalance((b) => Number(b) + Number(found.price));
+  }
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial", textAlign: "center" }}>
-      <h1>Employee Data Table</h1>
+    <div className="app-wrapper">
+      {/* Only one h1 in entire app */}
+      <h1>Expense Tracker</h1>
 
-      <table border="1" cellPadding="10" cellSpacing="0" width="100%">
-        <thead style={{ backgroundColor: "green", color: "white" }}>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentRows.map((employee) => (
-            <tr key={employee.id}>
-              <td>{employee.id}</td>
-              <td>{employee.name}</td>
-              <td>{employee.email}</td>
-              <td>{employee.role}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <section className="top-panel">
+        <WalletBalance
+          walletBalance={walletBalance}
+          onAddIncome={() => setShowAddIncome(true)}
+          onAddExpense={() => {
+            setEditingExpense(null);
+            setShowAddExpense(true);
+          }}
+        />
 
-      {/* Pagination Controls */}
-      <div style={{ marginTop: "20px", textAlign: "center"}}>
-        <button onClick={handlePrevious}
-        style = {{backgroundColor: "green", padding: "10px", color: "white"}}>
-          Previous
-        </button>
-        <span style={{ margin: "0 15px" , padding: "10px", backgroundColor: "green", color: "white" }}>
-           {currentPage} 
-        </span>
-        <button onClick={handleNext}
-        style ={{backgroundColor: "green", padding: "10px", color: "white"}}>
-          Next
-        </button>
-      </div>
+        <div className="charts-right">
+          <ExpenseSummary expenses={expenses} />
+        </div>
+      </section>
+
+      <section className="content-row">
+        <div className="left-column">
+          <h2 className="section-title">Recent Transactions</h2>
+          <ExpenseList
+            expenses={expenses}
+            onDelete={handleDeleteExpense}
+            onEdit={startEditExpense}
+          />
+        </div>
+
+        <div className="right-column">
+          <h2 className="section-title">Top Expenses</h2>
+          <ExpenseTrends expenses={expenses} />
+        </div>
+      </section>
+
+      {/* Add Income Modal */}
+      <AddIncomeModal
+        isOpen={showAddIncome}
+        onRequestClose={() => setShowAddIncome(false)}
+        onAdd={(amount) => {
+          handleAddIncome(amount);
+          setShowAddIncome(false);
+        }}
+      />
+
+      {/* Add / Edit Expense Modal - same modal component used for add & edit */}
+      <AddExpenseModal
+        isOpen={showAddExpense}
+        onRequestClose={() => {
+          setShowAddExpense(false);
+          setEditingExpense(null);
+        }}
+        onAddExpense={(exp) => {
+          // new add
+          handleAddExpense(exp);
+          setShowAddExpense(false);
+        }}
+        editingExpense={editingExpense}
+        onSaveEditedExpense={(updated) => handleSaveEditedExpense(updated)}
+      />
     </div>
   );
 }
-
-export default PaginationApp;
