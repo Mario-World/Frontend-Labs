@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import WalletBalance from "./components/walletBalance";
+import WalletBalance from "./components/WalletBalance";
 import AddIncomeModal from "./components/AddIncomeModal";
 import AddExpenseModal from "./components/AddExpenseModal";
 import ExpenseList from "./components/ExpenseList";
