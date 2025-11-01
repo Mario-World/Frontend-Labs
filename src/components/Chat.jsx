@@ -11,7 +11,7 @@ const Chat = () => {
     setMessages(savedMessages);
   }, []);
 
-  // Save to localStorage whenever messages change
+  // Save chat to localStorage when messages update
   useEffect(() => {
     localStorage.setItem("chatHistory", JSON.stringify(messages));
   }, [messages]);
@@ -22,7 +22,7 @@ const Chat = () => {
 
     const userMessage = { sender: "user", text: input };
 
-    // Find match in sampleData array (case-insensitive)
+    // Find the question in sampleData (case-insensitive)
     const match = sampleData.find(
       (item) =>
         item.question.toLowerCase().trim() === input.toLowerCase().trim()
@@ -31,6 +31,7 @@ const Chat = () => {
     const aiResponse =
       match?.response || "Sorry, Did not understand your query!";
 
+    // Bot message should use <p> and contain Soul AI in <span>
     const botMessage = { sender: "bot", text: aiResponse };
 
     setMessages((prev) => [...prev, userMessage, botMessage]);
@@ -45,17 +46,17 @@ const Chat = () => {
   return (
     <div className="chat-container">
       <div className="chat-box">
-        {messages.map((msg, index) => (
-          <p
-            key={index}
-            className={msg.sender === "user" ? "user-msg" : "bot-msg"}
-          >
-            <strong>
-              {msg.sender === "user" ? "You: " : "Soul AI: "}
-            </strong>
-            <span>{msg.text}</span>
-          </p>
-        ))}
+        {messages.map((msg, index) =>
+          msg.sender === "user" ? (
+            <p key={index} className="user-msg">
+              <strong>You:</strong> <span>{msg.text}</span>
+            </p>
+          ) : (
+            <p key={index} className="bot-msg">
+              <span className="bot-label">Soul AI</span>: {msg.text}
+            </p>
+          )
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="chat-form">
