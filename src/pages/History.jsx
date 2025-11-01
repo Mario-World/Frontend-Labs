@@ -1,37 +1,27 @@
 import React, { useEffect, useState } from "react";
 
 const History = () => {
-  const [savedMessages, setSavedMessages] = useState([]);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("chatHistory");
-    if (saved) {
-      setSavedMessages(JSON.parse(saved));
-    }
+    const saved = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    setHistory(saved);
   }, []);
 
   return (
     <div className="history-container">
-      <h2>Saved Conversations</h2>
-      {savedMessages.length === 0 ? (
-        <p>No saved messages found.</p>
+      <h2>Past Conversations</h2>
+      {history.length === 0 ? (
+        <p>No saved messages yet.</p>
       ) : (
-        savedMessages.map((msg, index) => (
-          <div
-            key={index}
-            className={`message ${msg.sender === "user" ? "user" : "ai"}`}
-          >
-            <p>
-              {msg.sender === "ai" ? (
-                <span>
-                  <strong>AI’s Response:</strong> {msg.text}
-                </span>
-              ) : (
-                msg.text
-              )}
-            </p>
-          </div>
-        ))
+        <ul>
+          {history.map((msg, index) => (
+            <li key={index}>
+              <strong>{msg.sender === "user" ? "You: " : "AI: "}</strong>
+              {msg.text}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
