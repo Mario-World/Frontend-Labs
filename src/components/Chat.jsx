@@ -5,13 +5,13 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
 
-  // Load saved messages on mount
+  // Load chat from localStorage on mount
   useEffect(() => {
     const savedMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
     setMessages(savedMessages);
   }, []);
 
-  // Save messages to localStorage on every update
+  // Save to localStorage whenever messages change
   useEffect(() => {
     localStorage.setItem("chatHistory", JSON.stringify(messages));
   }, [messages]);
@@ -21,19 +21,19 @@ const Chat = () => {
     if (!input.trim()) return;
 
     const userMessage = { sender: "user", text: input };
-    const key = input.toLowerCase().trim();
+
+    // Find match in sampleData array (case-insensitive)
+    const match = sampleData.find(
+      (item) =>
+        item.question.toLowerCase().trim() === input.toLowerCase().trim()
+    );
 
     const aiResponse =
-      sampleData[key] || "Sorry, Did not understand your query!";
+      match?.response || "Sorry, Did not understand your query!";
 
-    // Add Soul AI label before response
-    const botMessage = {
-      sender: "bot",
-      text: `Soul AI: ${aiResponse}`,
-    };
+    const botMessage = { sender: "bot", text: aiResponse };
 
-    const newMessages = [...messages, userMessage, botMessage];
-    setMessages(newMessages);
+    setMessages((prev) => [...prev, userMessage, botMessage]);
     setInput("");
   };
 
@@ -51,7 +51,7 @@ const Chat = () => {
             className={msg.sender === "user" ? "user-msg" : "bot-msg"}
           >
             <strong>
-              {msg.sender === "user" ? "You: " : "AI’s Response: "}
+              {msg.sender === "user" ? "You: " : "Soul AI: "}
             </strong>
             <span>{msg.text}</span>
           </p>
