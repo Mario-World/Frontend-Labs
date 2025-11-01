@@ -2,74 +2,77 @@ import React, { useState, useEffect } from "react";
 import sampleData from "../data/sampleData.json";
 
 const Chat = () => {
-  const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
 
-  // Load saved messages on mount
+  // Load saved chat from localStorage (if any)
   useEffect(() => {
-    const savedMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
-    setMessages(savedMessages);
+    const savedChat = localStorage.getItem("soulAI_chat");
+    if (savedChat) {
+      setMessages(JSON.parse(savedChat));
+    }
   }, []);
 
-  // Save messages to localStorage on every update
-  useEffect(() => {
-    localStorage.setItem("chatHistory", JSON.stringify(messages));
-  }, [messages]);
+  // Save chat messages manually when user clicks Save
+  const handleSaveChat = () => {
+    if (messages.length === 0) return alert("No messages to save!");
+    localStorage.setItem("soulAI_chat", JSON.stringify(messages));
+    alert("Chat saved successfully ✅");
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Send message function
+  const handleSend = () => {
     if (!input.trim()) return;
 
-    const userMessage = { sender: "user", text: input };
-    const key = input.toLowerCase().trim();
-
+    const userMessage = input.trim();
     const aiResponse =
-      sampleData[key] || "Sorry, Did not understand your query!";
+      sampleData[userMessage.toLowerCase()] ||
+      "I'm not sure how to answer that yet. Try asking something else!";
 
-    // Add Soul AI label before response
-    const botMessage = {
-      sender: "bot",
-      text: `Soul AI: ${aiResponse}`,
-    };
+    setMessages((prev) => [
+      ...prev,
+      { sender: "user", text: userMessage },
+      { sender: "ai", text: aiResponse },
+    ]);
 
-    const newMessages = [...messages, userMessage, botMessage];
-    setMessages(newMessages);
     setInput("");
   };
 
-  const handleSave = () => {
-    localStorage.setItem("chatHistory", JSON.stringify(messages));
-    alert("Chat saved successfully!");
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSend();
   };
 
   return (
     <div className="chat-container">
+      <h2 className="chat-title">💬 Soul AI</h2>
+
       <div className="chat-box">
         {messages.map((msg, index) => (
           <p
             key={index}
-            className={msg.sender === "user" ? "user-msg" : "bot-msg"}
+            className={`chat-message ${
+              msg.sender === "user" ? "user-msg" : "bot-msg"
+            }`}
           >
-            <strong>
-              {msg.sender === "user" ? "You: " : "AI’s Response: "}
-            </strong>
-            <span>{msg.text}</span>
+            <strong>{msg.sender === "user" ? "You: " : "Soul AI: "}</strong>
+            {msg.text}
           </p>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="chat-form">
+      <div className="chat-input">
         <input
           type="text"
-          placeholder="Message Bot AI..."
+          placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
-        <button type="submit">Ask</button>
-        <button type="button" onClick={handleSave}>
+        <button onClick={handleSend}>Send</button>
+        <button className="save-btn" onClick={handleSaveChat}>
           Save
         </button>
-      </form>
+      </div>
     </div>
   );
 };
