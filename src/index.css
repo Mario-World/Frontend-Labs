@@ -1,6 +1,6 @@
 body {
   font-family: "Poppins", sans-serif;
-  background-color: rgb(192, 158, 192);
+  background-color: rgb(210, 186, 210);
   color: #fff;
   margin: 0;
   padding: 0;
@@ -10,7 +10,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1c2541;
+  background-color: whitesmoke;
   padding: 15px 30px;
 }
 
@@ -20,7 +20,7 @@ body {
 }
 
 nav a {
-  color: #fff;
+  color: purple;
   text-decoration: none;
   margin-left: 20px;
 }
@@ -33,7 +33,7 @@ nav a:hover {
   width: 100%;
   max-width: 700px;
   margin: 40px auto;
-  background-color: #1c2541;
+  background-color: whitesmoke;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
@@ -78,7 +78,7 @@ nav a:hover {
 }
 
 .chat-form button {
-  background-color: #5bc0be;
+  background-color: rgb(199, 150, 199);
   color: #0b132b;
   border: none;
   border-radius: 6px;
