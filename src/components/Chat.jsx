@@ -56,7 +56,7 @@ const Chat = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button type="submit">Send</button>
+        <button type="submit">Ask</button>
         <button type="button" onClick={handleSave}>
           Save
         </button>
