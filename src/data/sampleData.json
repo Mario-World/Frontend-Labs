@@ -2,5 +2,6 @@
   "hi": "Hello! How can I help you today?",
   "hello": "Hi there! What can I do for you?",
   "who are you": "I’m Soul AI, your personal assistant!",
-  "what is ai": "AI stands for Artificial Intelligence — the simulation of human intelligence by machines."
+  "what is ai": "AI stands for Artificial Intelligence — the simulation of human intelligence by machines.",
+  "what are restful apis": "RESTful APIs are designed around the REST (Representational State Transfer) architecture, which uses HTTP requests to access and manipulate data. They follow a stateless, client-server, cacheable communications protocol."
 }

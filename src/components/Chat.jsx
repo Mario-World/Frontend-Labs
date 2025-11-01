@@ -5,11 +5,13 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
 
+  // Load saved messages on mount
   useEffect(() => {
     const savedMessages = JSON.parse(localStorage.getItem("chatHistory")) || [];
     setMessages(savedMessages);
   }, []);
 
+  // Save messages to localStorage on every update
   useEffect(() => {
     localStorage.setItem("chatHistory", JSON.stringify(messages));
   }, [messages]);
@@ -19,11 +21,16 @@ const Chat = () => {
     if (!input.trim()) return;
 
     const userMessage = { sender: "user", text: input };
-    const aiResponse =
-      sampleData[input.toLowerCase()] ||
-      "Sorry, Did not understand your query!";
+    const key = input.toLowerCase().trim();
 
-    const botMessage = { sender: "bot", text: aiResponse };
+    const aiResponse =
+      sampleData[key] || "Sorry, Did not understand your query!";
+
+    // Add Soul AI label before response
+    const botMessage = {
+      sender: "bot",
+      text: `Soul AI: ${aiResponse}`,
+    };
 
     const newMessages = [...messages, userMessage, botMessage];
     setMessages(newMessages);
@@ -43,7 +50,9 @@ const Chat = () => {
             key={index}
             className={msg.sender === "user" ? "user-msg" : "bot-msg"}
           >
-            <strong>{msg.sender === "user" ? "You: " : "AI’s Response: "}</strong>
+            <strong>
+              {msg.sender === "user" ? "You: " : "AI’s Response: "}
+            </strong>
             <span>{msg.text}</span>
           </p>
         ))}
